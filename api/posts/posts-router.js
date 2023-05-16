@@ -25,4 +25,23 @@ router.get("/:id", async (req, res) => {
   }
 });
 
+router.post("/", async (req, res) => {
+  try {
+    let { title, contents } = req.body;
+    if (!title || !contents) {
+      res.status(400).json({
+        message: "Lütfen gönderi için bir title ve contents sağlayın",
+      });
+    } else {
+      const insertedId = await postsModel.insert({ title, contents });
+      const insertedPost = await postsModel.findById(insertedId.id);
+      res.status(201).json(insertedPost);
+    }
+  } catch (error) {
+    res
+      .status(500)
+      .json({ message: "Veritabanına kaydedilirken bir hata oluştu" });
+  }
+});
+
 module.exports = router;
